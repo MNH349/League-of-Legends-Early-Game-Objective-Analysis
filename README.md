@@ -1,5 +1,3 @@
-# Does the First Dragon Win Games? Early Objectives and Match Outcomes in Pro League of Legends
-
 **Name(s)**: Michael Huang
 
 ---
