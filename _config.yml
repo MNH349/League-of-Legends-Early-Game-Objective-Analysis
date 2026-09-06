@@ -1,4 +1,5 @@
 title: Does the First Dragon Win Games? Early Objectives in Pro League of Legends
 description: This is a DSC80 final project at UCSD. I utilized techniques taught in the course to explore pro League of Legends data.
+remote_theme: pages-themes/merlot@v0.2.0
 plugins:
   - jekyll-remote-theme

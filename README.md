@@ -45,8 +45,6 @@ After keeping team rows, the relevant columns are:
 3. I dropped rows missing either `firstdragon` or `firstherald`, since they are only recorded for `complete` games. This reduced around 4000 rows from the dataset.
 4. I collapsed 0/1 flags into a single categorical (`Both`, `First Dragon only`, `First Herald only`, `Neither`) that captures which early objective a team took first.
 
-Head of the cleaned dataset:
-
 | league   | side   |   result |   firstblood |   firstdragon |   firstherald |   golddiffat15 |   gamelength |
 |:---------|:-------|---------:|-------------:|--------------:|--------------:|---------------:|-------------:|
 | LCKC     | Blue   |        0 |            1 |             0 |             1 |            107 |         1713 |
@@ -54,8 +52,6 @@ Head of the cleaned dataset:
 | LCKC     | Blue   |        0 |            0 |             0 |             1 |          -1763 |         2114 |
 | LCKC     | Red    |        1 |            1 |             1 |             0 |           1763 |         2114 |
 | LCKC     | Blue   |        1 |            0 |             1 |             0 |           1191 |         1972 |
-
-### Univariate analysis
 
 <iframe src="assets/dist_gamelength.html" width="800" height="500" frameborder="0"></iframe>
 
@@ -65,8 +61,6 @@ Most pro games last **~25–35 minutes**, with a right skew toward longer games.
 
 `golddiffat15` is roughly symmetric. The spread (many games at 2,000+ gold) shows early leads are common and sizable to lead to winning games, motivating it as a feature for the prediction model.
 
-### Bivariate analysis
-
 <iframe src="assets/winrate_objective.html" width="800" height="500" frameborder="0"></iframe>
 
 Teams that grab **both** early objectives win **~68%** of the time and teams that grab **neither** win only **~32%**, which means early tempo correlates with winning. The **First Dragon only (~49.5%)** and **First Herald only (~50.5%)** are near each other. That motivates controlling for one objective while testing the other.
@@ -74,10 +68,6 @@ Teams that grab **both** early objectives win **~68%** of the time and teams tha
 <iframe src="assets/winrate_dragon_by_herald.html" width="800" height="500" frameborder="0"></iframe>
 
 Within **each** herald group, getting the first dragon raises win rate by a similar amount (~+17 percentage points): from ~32% to ~50% without the herald, and from ~50% to ~68% with it. The dragon's effect looks **consistent regardless of the herald**, which is supporting evidence that overall the effect of herald can be controlled and the association between dragon and win can be tested in Step 4.
-
-### Interesting aggregate
-
-Win rate (%) by first dragon (rows) and first herald (columns):
 
 |                  |   No first herald |   Got first herald |
 |:-----------------|------------------:|-------------------:|
