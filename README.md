@@ -1,18 +1,24 @@
 # Does the First Dragon Win Games? Early Objectives and Match Outcomes in Pro League of Legends
 
-**Author:** Michael Huang
+**Name(s)**: Michael Huang
 
 ---
 
 ## Introduction
 
-This project uses the **2022 League of Legends competitive match dataset** from [Oracle's Elixir](https://oracleselixir.com/tools/downloads). In the raw file, every `gameid` has up to **12 rows** — one for each of the 10 players (a `top`, `jng`, `mid`, `bot`, and `sup` on each side) plus **2 team-summary rows**. Because my question is about a *team-level* strategic decision, I keep only the **team rows**, leaving about **25,058 team rows across ~12,529 games** (21,282 rows after cleaning).
+### The dataset
+
+This project uses the **2022 League of Legends competitive match dataset** from [Oracle's Elixir](https://oracleselixir.com/tools/downloads). In the raw file, every `gameid` has up to **12 rows**, one for each of the 10 players (a `top`, `jng`, `mid`, `bot`, and `sup` on each side) plus **2 team-summary rows**. Because my question is about a *team-level* strategic decision, I keep only the **team rows**, leaving the dataset with ~25000 rows for ~12500 games.
+
+### My question
 
 Early in a game, a team fights over neutral objectives, the **first Dragon** and the **Rift Herald**. Each objective gives different advantages (Dragon = long-term stacking buffs; Herald = a battering ram for early tower gold and map pressure). Players always debate how much getting the first Dragon actually matters. My central question is:
 
 > **In professional games, is securing the first Dragon associated with winning the game?**
 
 ### Columns I use
+
+After keeping team rows, the relevant columns are:
 
 | Column | Description |
 |---|---|
@@ -38,10 +44,10 @@ Early in a game, a team fights over neutral objectives, the **first Dragon** and
 
 1. I filtered to `position == 'team'` to keep only the team rows. I kept a copy (`team_all`) that still contains missing values for the Assessment of Missingness step.
 2. I selected relevant columns like the outcome (`result`), the early objectives (`firstdragon`, `firstherald`, `firstblood`, `firsttower`), context (`league`, `side`, `gamelength`, `golddiffat15`), and `datacompleteness`.
-3. I dropped rows missing either `firstdragon` or `firstherald`, since they are only recorded for `complete` games. This reduced around 4,000 rows from the dataset (25,058 → 21,282).
-4. I collapsed the 0/1 flags into a single categorical (`Both`, `First Dragon only`, `First Herald only`, `Neither`) that captures which early objective a team took first.
+3. I dropped rows missing either `firstdragon` or `firstherald`, since they are only recorded for `complete` games. This reduced around 4000 rows from the dataset.
+4. I collapsed 0/1 flags into a single categorical (`Both`, `First Dragon only`, `First Herald only`, `Neither`) that captures which early objective a team took first.
 
-The head of the cleaned data (columns trimmed for width):
+Head of the cleaned dataset:
 
 | league   | side   |   result |   firstblood |   firstdragon |   firstherald |   golddiffat15 |   gamelength |
 |:---------|:-------|---------:|-------------:|--------------:|--------------:|---------------:|-------------:|
@@ -96,7 +102,7 @@ Several columns (`golddiffat15`, `firstherald`, `firstbaron`) are missing for th
 
 The permutation test gives **p ≈ 0.00**, so I **reject** the null of no dependence: the missingness of `golddiffat15` **depends on `league`**. By observing the chart, among the 20 largest leagues, only **LPL** and **LDL** (the Chinese leagues, ~3,450 games combined) are missing `golddiffat15`, and they are missing it **100%** of the time, while every other major league has essentially none. I did a quick search and it shows that in 2022 those broadcasts did not share detailed timeline data. This is exactly MAR: missingness is explained by an observed column (`league`), not by the gold values themselves.
 
-I also ran the same permutation test against `side` (Blue/Red) as a contrast. There the observed TVD is **~0.00** with **p ≈ 1.00**, so I **fail to reject** the null: the missingness of `golddiffat15` does **not** depend on `side`. This makes sense because when a game's timeline is uncollected, *both* the Blue and Red team rows are missing, so missingness is balanced across sides. This is my example of a column the missingness does **not** depend on.
+Repeating the same permutation test against `side` gives an observed TVD of **~0.00** and **p ≈ 1.00**, so I **fail to reject** the null: the missingness of `golddiffat15` does **not** depend on `side`. This makes sense because when a game's timeline is uncollected, *both* the Blue and Red team rows are missing, so the missingness is balanced across sides. This is my example of a column where the missingness does **not** depend.
 
 ---
 
@@ -161,8 +167,6 @@ The four raw flags are passed through. All feature engineering and the model are
 The final model improves test accuracy by **~7 points** and, with capped depth, no longer overfits. Honestly, most of that gain comes from *regularizing* the model rather than the extra features — `golddiffat15` already carries most of the early-game signal, so the added flags and count contribute only a little on top.
 
 <iframe src="assets/confusion_matrix.html" width="800" height="600" frameborder="0"></iframe>
-
-The confusion matrix shows errors are roughly balanced between predicted wins and losses.
 
 ---
 
