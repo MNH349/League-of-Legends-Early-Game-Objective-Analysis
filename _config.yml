@@ -1,0 +1,5 @@
+title: Does the First Dragon Win Games? Early Objectives in Pro League of Legends
+description: A DSC 80 final project analyzing how early-game objectives relate to winning.
+remote_theme: pages-themes/cayman@v0.2.0
+plugins:
+  - jekyll-remote-theme
